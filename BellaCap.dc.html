@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>BellaCap CR — Gorras 100% originales | Lleva tu pasión en la cabeza</title>
+<meta name="description" content="Gorras 100% originales New Era y más. Sistema de apartado con 50% de abono. Envíos a todo Costa Rica por Correos de Costa Rica." />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="BellaCap CR — Lleva tu pasión en la cabeza" />
+<meta property="og:description" content="Gorras 100% originales. Apartá con 50%. Envíos a todo Costa Rica." />
+<meta property="og:image" content="assets/img/nets.png" />
+<meta property="og:locale" content="es_CR" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="preload" as="image" href="assets/3d/cap-poster.webp" />
+<link rel="preload" as="fetch" href="assets/3d/cap.glb" crossorigin="anonymous" />
+<style>
+  :root {
+    --bc-negro: #0A0A0A; --bc-carbon: #111111; --bc-linea: #1C1C1C;
+    --bc-oro: #C9A227; --bc-rojo: #E5251E;
+    /* Una sola curva para todo lo que entra o responde. Las demas se ganan su lugar. */
+    --e-salida: cubic-bezier(0.23, 1, 0.32, 1);
+    --e-cajon: cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  html { scroll-behavior: smooth; scrollbar-color: #2A2A2A #0A0A0A; }
+  body { margin: 0; background: #0A0A0A; color: #FFFFFF; font-family: 'Space Grotesk', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  a { color: #C9A227; text-decoration: none; }
+  a:hover { color: #FFFFFF; }
+  input, button, select { font-family: inherit; }
+  input { caret-color: #C9A227; }
+  ::selection { background: #C9A227; color: #0A0A0A; }
+  :where(a, button, input, summary, [tabindex]):focus-visible { outline: 2px solid #C9A227; outline-offset: 3px; }
+
+  ::-webkit-scrollbar { width: 12px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #0A0A0A; }
+  ::-webkit-scrollbar-thumb { background: #262626; border: 3px solid #0A0A0A; border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: #3C3C3C; }
+  #bc-scroll::-webkit-scrollbar { height: 6px; }
+  #bc-scroll::-webkit-scrollbar-thumb { background: #2A2A2A; border: none; border-radius: 99px; }
+
+  @keyframes bc-marquee { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
+
+  /* --- cabecera: se materializa al bajar en vez de traer un borde fijo --- */
+  [data-bc-cabecera] {
+    background: rgba(10,10,10,0.60);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    backdrop-filter: blur(14px) saturate(150%);
+    border-bottom: 1px solid transparent;
+    transition: background-color 320ms var(--e-salida), border-color 320ms var(--e-salida);
+  }
+  [data-bc-cabecera][data-bc-pegado] { background: rgba(10,10,10,0.90); border-bottom-color: #1C1C1C; }
+
+  /* --- portada --- */
+  .bc-portada {
+    position: relative; overflow: hidden;
+    min-height: clamp(600px, 90vh, 940px);
+    display: grid; align-content: center;
+    padding: clamp(74px, 11vh, 140px) 20px clamp(44px, 7vh, 84px);
+    background: radial-gradient(120% 90% at 72% 8%, #1A1A1A 0%, #0A0A0A 62%);
+  }
+  .bc-lineas { position: absolute; inset: -10% -10% 0 -10%; pointer-events: none;
+    background-image: repeating-linear-gradient(115deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 26px); }
+  .bc-portada-luz { position: absolute; top: 4%; right: -8%; width: 52vw; max-width: 620px; aspect-ratio: 1;
+    pointer-events: none; border-radius: 50%; filter: blur(12px);
+    background: radial-gradient(circle, rgba(201,162,39,0.13), transparent 64%); }
+
+  .bc-portada-red {
+    position: relative; width: 100%; max-width: 1240px; margin: 0 auto;
+    display: grid; column-gap: clamp(24px, 4vw, 68px);
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "sello" "titular" "vitrina" "bajada" "acciones";
+    justify-items: start;
+  }
+  @media (min-width: 900px) {
+    .bc-portada-red {
+      grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr);
+      grid-template-areas: "sello vitrina" "titular vitrina" "bajada vitrina" "acciones vitrina";
+    }
+    .bc-vitrina { align-self: center; margin: 0; max-width: min(540px, 44vw); }
+  }
+
+  .bc-sello { grid-area: sello; display: inline-flex; align-items: center; gap: 10px;
+    padding: 7px 14px; margin-bottom: clamp(18px, 3vw, 26px); border: 1px solid #2A2A2A; border-radius: 99px;
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #C9A227; }
+  .bc-sello i { width: 6px; height: 6px; border-radius: 50%; background: #C9A227; }
+
+  /* El tracking se aprieta a medida que el tipo crece: a 124px, -0.01em lee suelto. */
+  .bc-titular { grid-area: titular; margin: 0;
+    font-family: 'Anton', sans-serif; font-weight: 400;
+    font-size: clamp(50px, 7.6vw, 124px); line-height: 0.86; letter-spacing: -0.022em;
+    text-transform: uppercase; text-wrap: balance; }
+  .bc-titular em { font-style: normal; color: #C9A227; }
+
+  .bc-bajada { grid-area: bajada; max-width: 46ch; margin: clamp(18px, 3vw, 26px) 0 0;
+    font-size: clamp(15px, 3.4vw, 18px); line-height: 1.6; color: #B4B4B4; text-wrap: pretty; }
+  .bc-acciones { grid-area: acciones; display: flex; flex-wrap: wrap; gap: 12px; margin-top: clamp(22px, 4vw, 34px); }
+
+  /* --- vitrina 3D --- */
+  .bc-vitrina { grid-area: vitrina; position: relative; justify-self: center;
+    width: 100%; max-width: min(540px, 72vw); aspect-ratio: 1 / 1;
+    margin: clamp(12px, 3vw, 22px) 0 clamp(16px, 4vw, 26px); }
+  .bc-vitrina-halo { position: absolute; inset: -16%; pointer-events: none; filter: blur(18px);
+    background: radial-gradient(circle at 50% 44%, rgba(201,162,39,0.15) 0%, rgba(201,162,39,0.045) 34%, transparent 62%); }
+  .bc-vitrina-piso { position: absolute; left: 10%; right: 10%; bottom: 9%; height: 18%;
+    pointer-events: none; filter: blur(14px);
+    background: radial-gradient(ellipse at 50% 0%, rgba(201,162,39,0.20), transparent 70%); }
+  .bc-vitrina-lienzo { position: absolute; inset: 0; }
+  .bc-vitrina-poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain;
+    pointer-events: none; transition: opacity 620ms var(--e-salida); }
+  .bc-vitrina-lienzo[data-bc-estado="listo"] + .bc-vitrina-poster { opacity: 0; }
+  .bc-vitrina-pie { position: absolute; left: 0; right: 0; bottom: 1%; margin: 0;
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 12px;
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #8A8A8A; }
+  .bc-vitrina-tip { display: none; align-items: center; gap: 7px; color: #C9A227; }
+  .bc-vitrina-lienzo[data-bc-estado="listo"] ~ .bc-vitrina-pie .bc-vitrina-tip { display: inline-flex; }
+
+  /* --- botones --- */
+  .bc-btn { display: inline-flex; align-items: center; justify-content: center;
+    padding: 17px 30px; border-radius: 99px; cursor: pointer;
+    font-size: 14px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    transition: transform 180ms var(--e-salida), background-color 220ms ease, border-color 220ms ease, color 220ms ease; }
+  .bc-btn-solido { background: #FFFFFF; border: 1px solid #FFFFFF; }
+  .bc-btn-solido, .bc-btn-solido:hover, .bc-btn-solido:focus { color: #0A0A0A; }
+  .bc-btn-linea { border: 1px solid #333333; }
+  .bc-btn-linea, .bc-btn-linea:hover, .bc-btn-linea:focus { color: #FFFFFF; }
+  @media (hover: hover) and (pointer: fine) {
+    .bc-btn-solido:hover { transform: translateY(-3px); }
+    .bc-btn-linea:hover { border-color: #C9A227; }
+  }
+  .bc-btn:active { transform: scale(0.97); }
+
+  [data-bc-press] { transition: transform 170ms var(--e-salida), background-color 220ms ease, border-color 220ms ease, color 220ms ease; }
+  [data-bc-press]:active { transform: scale(0.97); }
+  @media (hover: hover) and (pointer: fine) {
+    [data-bc-press="alza"]:hover { transform: translateY(-2px); }
+  }
+
+  [data-bc-ficha] { transition: transform 300ms var(--e-salida), border-color 300ms var(--e-salida); }
+  [data-bc-ficha] img { transition: transform 520ms var(--e-salida); }
+  @media (hover: hover) and (pointer: fine) {
+    [data-bc-ficha]:hover { transform: translateY(-6px); border-color: #333333; }
+    [data-bc-ficha]:hover img { transform: scale(1.06); }
+  }
+  [data-bc-ficha]:active { transform: translateY(-2px) scale(0.99); }
+
+  /* Movimiento reducido: mas suave, no apagado. Se van los desplazamientos y
+     se quedan los cambios de color y opacidad, que son los que explican que paso. */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    [data-bc-marquesina] { animation: none !important; }
+    .bc-lineas { transform: none !important; }
+    [data-bc-ficha]:hover, [data-bc-ficha]:active, [data-bc-press]:hover,
+    .bc-btn:hover, .bc-btn:active, [data-bc-press]:active { transform: none !important; }
+    .bc-btn:active, [data-bc-press]:active { opacity: 0.76; }
+    * { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 200ms !important; }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    [data-bc-cabecera] { background: #0A0A0A !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+  }
+  @media (prefers-contrast: more) {
+    [data-bc-cabecera] { background: #0A0A0A; border-bottom-color: #4A4A4A; }
+    .bc-bajada { color: #DCDCDC; }
+  }
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"LocalBusiness","name":"BellaCap CR","description":"Tienda costarricense de gorras 100% originales. Sistema de apartado y envíos a todo el país.","areaServed":"Costa Rica","address":{"@type":"PostalAddress","addressCountry":"CR"},"sameAs":["https://instagram.com/bellacapcr"],"telephone":"+50663969167","email":"bellacapcr@gmail.com","priceRange":"₡₡"}
+</script>
+</helmet>
+
+<div style="max-width: 100%; overflow-x: clip; background: #0A0A0A;">
+
+  <header data-bc-cabecera="1" style="position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 20px;">
+    <a href="#top" style="display: flex; align-items: baseline; gap: 8px; color: #FFFFFF; font-family: 'Anton', sans-serif; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase;">BellaCap<span style="color: #C9A227; font-size: 13px; letter-spacing: 0.22em;">CR</span></a>
+    <nav style="display: none; gap: 26px; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: #9A9A9A;" data-bc-nav="1">
+      <a href="#catalogo" style="color: #9A9A9A;" style-hover="color: #FFFFFF;">Catálogo</a>
+      <a href="#apartado" style="color: #9A9A9A;" style-hover="color: #FFFFFF;">Apartado</a>
+      <a href="#marca" style="color: #9A9A9A;" style-hover="color: #FFFFFF;">La marca</a>
+      <a href="#faq" style="color: #9A9A9A;" style-hover="color: #FFFFFF;">FAQ</a>
+    </nav>
+    <button type="button" onClick="{{ abrirCarrito }}" data-bc-press="alza" aria-label="Abrir tu pedido" style="display: flex; align-items: center; gap: 9px; padding: 9px 13px 9px 14px; background: #C9A227; color: #0A0A0A; border: none; border-radius: 99px; font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M1.6 2.2h2.2l1.9 8.6a1.4 1.4 0 0 0 1.4 1.1h6.2a1.4 1.4 0 0 0 1.4-1.1l1.1-5.4H5.1" stroke="#0A0A0A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.4" cy="15.3" r="1.25" fill="#0A0A0A"/><circle cx="13.6" cy="15.3" r="1.25" fill="#0A0A0A"/></svg>Carrito<span style="display: grid; place-items: center; min-width: 21px; height: 21px; padding: 0 6px; border-radius: 99px; background: #0A0A0A; color: #C9A227; font-size: 11px; letter-spacing: 0;">{{ totalUnidades }}</span></button>
+  </header>
+
+  <section id="top" class="bc-portada">
+    <div data-bc-parallax="1" class="bc-lineas"></div>
+    <div class="bc-portada-luz"></div>
+
+    <div class="bc-portada-red">
+      <div class="bc-sello"><i></i>100% originales</div>
+
+      <h1 class="bc-titular">Lleva tu<br />pasión en<br />la <em>cabeza</em></h1>
+
+      <figure class="bc-vitrina">
+        <div class="bc-vitrina-halo"></div>
+        <div class="bc-vitrina-piso"></div>
+        <div class="bc-vitrina-lienzo" data-bc-cap="1" data-bc-modelo="assets/3d/cap.glb"></div>
+        <img class="bc-vitrina-poster" src="assets/3d/cap-poster.webp" alt="Gorra New York Yankees 59FIFTY negra, vista de tres cuartos" width="760" height="760" fetchpriority="high" decoding="async" />
+        <figcaption class="bc-vitrina-pie">
+          <span>New York Yankees 59FIFTY</span>
+          <span class="bc-vitrina-tip"><svg width="15" height="12" viewBox="0 0 15 12" fill="none" aria-hidden="true"><path d="M4.6 2.2 1.8 6l2.8 3.8M10.4 2.2 13.2 6l-2.8 3.8M6.1 10.3 8.9 1.7" stroke="#C9A227" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Arrastrá para girarla</span>
+        </figcaption>
+      </figure>
+
+      <p class="bc-bajada">Gorras originales de MLB y NBA, acá en Costa Rica. Apartá con {{ abonoPct }}% y te la guardamos.</p>
+
+      <div class="bc-acciones">
+        <a href="#catalogo" class="bc-btn bc-btn-solido">Ver catálogo</a>
+        <a href="{{ waTiendaLink }}" target="_blank" rel="noopener" class="bc-btn bc-btn-linea">Escribir por WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); border-top: 1px solid #1C1C1C; border-bottom: 1px solid #1C1C1C; background: #0D0D0D;">
+    <div style="padding: 22px 20px; border-right: 1px solid #1C1C1C;"><p style="margin: 0; font-family: 'Anton', sans-serif; font-size: 17px; text-transform: uppercase; letter-spacing: 0.02em;">100% originales</p><p style="margin: 6px 0 0; font-size: 13px; color: #8A8A8A;">Compradas en tienda autorizada</p></div>
+    <div style="padding: 22px 20px; border-right: 1px solid #1C1C1C;"><p style="margin: 0; font-family: 'Anton', sans-serif; font-size: 17px; text-transform: uppercase; letter-spacing: 0.02em;">Sistema de apartado</p><p style="margin: 6px 0 0; font-size: 13px; color: #8A8A8A;">{{ abonoPct }}% de abono, {{ plazoDias }} días</p></div>
+    <div style="padding: 22px 20px; border-right: 1px solid #1C1C1C;"><p style="margin: 0; font-family: 'Anton', sans-serif; font-size: 17px; text-transform: uppercase; letter-spacing: 0.02em;">Envíos a todo el país</p><p style="margin: 6px 0 0; font-size: 13px; color: #8A8A8A;">{{ zonaEntrega }}</p></div>
+    <div style="padding: 22px 20px;"><p style="margin: 0; font-family: 'Anton', sans-serif; font-size: 17px; text-transform: uppercase; letter-spacing: 0.02em;">Pedido por WhatsApp</p><p style="margin: 6px 0 0; font-size: 13px; color: #8A8A8A;">Te contesta quien te vende</p></div>
+  </div>
+
+  <div style="display: flex; overflow: hidden; padding: 16px 0; background: #C9A227; color: #0A0A0A;">
+    <div data-bc-marquesina="1" aria-hidden="true" style="display: flex; flex-shrink: 0; gap: 44px; padding-right: 44px; white-space: nowrap; animation: bc-marquee 26s linear infinite; font-family: 'Anton', sans-serif; font-size: 19px; letter-spacing: 0.1em; text-transform: uppercase;">
+      <span>New Era</span><span>·</span><span>MLB</span><span>·</span><span>NBA</span><span>·</span><span>59FIFTY</span><span>·</span><span>9FIFTY</span><span>·</span><span>9FORTY</span><span>·</span><span>Originales</span><span>·</span>
+      <span>New Era</span><span>·</span><span>MLB</span><span>·</span><span>NBA</span><span>·</span><span>59FIFTY</span><span>·</span><span>9FIFTY</span><span>·</span><span>9FORTY</span><span>·</span><span>Originales</span><span>·</span>
+    </div>
+  </div>
+
+  <section id="drops" style="padding: 88px 20px 76px; max-width: 1240px; margin: 0 auto;">
+    <div data-reveal="1" style="margin-bottom: 34px;">
+      <div>
+        <p style="margin: 0 0 10px; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: #E5251E;">En stock</p>
+        <h2 style="margin: 0; font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(38px, 9vw, 78px); line-height: 0.92; text-transform: uppercase;">Listas para enviar</h2>
+      </div>
+    </div>
+    <div id="bc-scroll" style="display: flex; gap: 18px; overflow-x: auto; padding-bottom: 14px; scroll-snap-type: x mandatory;">
+      <sc-for list="{{ drops }}" as="g" hint-placeholder-count="4">
+        <article style="flex: 0 0 74vw; max-width: 320px; scroll-snap-align: start; background: #111111; border: 1px solid #1C1C1C; border-radius: 4px; overflow: hidden;">
+          <div style="background: #FFFFFF;"><img src="{{ g.imagen }}" alt="{{ g.nombre }}" width="760" height="760" loading="lazy" style="display: block; width: 100%; height: auto;" /></div>
+          <div style="padding: 18px;">
+            <p style="margin: 0 0 6px; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #C9A227;">{{ g.marca }} · {{ g.liga }}</p>
+            <h3 style="margin: 0 0 10px; font-family: 'Anton', sans-serif; font-weight: 400; font-size: 21px; line-height: 1.05; text-transform: uppercase;">{{ g.nombre }}</h3>
+            <p style="margin: 0; font-size: 13px; color: #8A8A8A;">Talla {{ g.talla }} · {{ g.color }}</p>
+          </div>
+        </article>
+      </sc-for>
+      <article style="flex: 0 0 74vw; max-width: 320px; scroll-snap-align: start; display: flex; flex-direction: column; justify-content: space-between; gap: 30px; padding: 24px; background: #0A0A0A; border: 1px dashed #E5251E; border-radius: 4px;">
+        <p style="margin: 0; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: #E5251E;">Coming soon</p>
+        <h3 style="margin: 0; font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(30px, 8vw, 46px); line-height: 0.94; text-transform: uppercase;">Próximo<br />drop</h3>
+        <p style="margin: 0; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; line-height: 1.7; color: #808080;"></p>
+        <a href="{{ waAvisoLink }}" target="_blank" rel="noopener" style="display: block; padding: 14px; text-align: center; background: #E5251E; color: #FFFFFF; border-radius: 99px; font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;" style-hover="color: #FFFFFF;">Avisame primero</a>
+      </article>
+    </div>
+  </section>
+
+  <section id="catalogo" style="padding: 76px 20px 96px; max-width: 1240px; margin: 0 auto; border-top: 1px solid #1C1C1C;">
+    <div data-reveal="1" style="margin-bottom: 30px;">
+      <p style="margin: 0 0 10px; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: #C9A227;">Catálogo</p>
+      <h2 style="margin: 0; font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(38px, 9vw, 78px); line-height: 0.92; text-transform: uppercase;">Todas las gorras</h2>
+    </div>
+
+    <div style="display: grid; gap: 18px; margin-bottom: 30px; padding: 20px; background: #101010; border: 1px solid #1C1C1C; border-radius: 4px;">
+      <input type="search" value="{{ query }}" onInput="{{ onBuscar }}" placeholder="Buscar por nombre, equipo o color…" style="width: 100%; padding: 14px 16px; background: #0A0A0A; border: 1px solid #262626; border-radius: 99px; color: #FFFFFF; font-size: 15px; outline: none;" style-focus="border-color: #C9A227;" />
+      <sc-for list="{{ gruposFiltro }}" as="grupo" hint-placeholder-count="3">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
+          <span style="min-width: 74px; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #808080;">{{ grupo.etiqueta }}</span>
+          <sc-for list="{{ grupo.opciones }}" as="op" hint-placeholder-count="4">
+            <button type="button" onClick="{{ op.toggle }}" data-bc-press="1" aria-pressed="{{ op.activo }}" style="{{ op.estilo }}">{{ op.valor }}</button>
+          </sc-for>
+        </div>
+      </sc-for>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-top: 4px; border-top: 1px solid #1C1C1C;">
+        <p style="margin: 0; font-size: 13px; color: #8A8A8A;">{{ conteoTexto }}</p>
+        <button type="button" onClick="{{ limpiarFiltros }}" data-bc-press="1" style="padding: 8px 14px; background: transparent; border: 1px solid #262626; border-radius: 99px; color: #9A9A9A; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;" style-hover="border-color: #C9A227; color: #FFFFFF;">Limpiar filtros</button>
+      </div>
+    </div>
+
+    <sc-if value="{{ sinResultados }}" hint-placeholder-val="{{ false }}">
+      <div style="padding: 64px 24px; text-align: center; border: 1px dashed #262626; border-radius: 4px;">
+        <p style="margin: 0 0 8px; font-family: 'Anton', sans-serif; font-size: 26px; text-transform: uppercase;">Nada con esos filtros</p>
+        <p style="margin: 0 0 22px; font-size: 14px; color: #8A8A8A;">Probá quitar un filtro, o escribinos y te buscamos el modelo.</p>
+        <a href="{{ waTiendaLink }}" target="_blank" rel="noopener" style="display: inline-block; padding: 13px 24px; background: #C9A227; color: #0A0A0A; border-radius: 99px; font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;" style-hover="color: #0A0A0A;">Pedir un modelo</a>
+      </div>
+    </sc-if>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px;">
+      <sc-for list="{{ visibles }}" as="g" hint-placeholder-count="9">
+        <article data-reveal="1" data-bc-ficha="1" style="display: flex; flex-direction: column; background: #111111; border: 1px solid #1C1C1C; border-radius: 4px; overflow: hidden;">
+          <div style="position: relative; overflow: hidden; background: #FFFFFF;">
+            <img src="{{ g.imagen }}" alt="{{ g.nombre }}" width="760" height="760" loading="lazy" style="display: block; width: 100%; height: auto;" />
+            <span style="{{ g.badgeEstilo }}">{{ g.estado }}</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; padding: 18px;">
+            <p style="margin: 0; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #C9A227;">{{ g.marca }} · {{ g.liga }}</p>
+            <h3 style="margin: 0; font-family: 'Anton', sans-serif; font-weight: 400; font-size: 20px; line-height: 1.06; text-transform: uppercase;">{{ g.nombre }}</h3>
+            <p style="margin: 0; font-size: 13px; color: #8A8A8A;">Talla {{ g.talla }} · {{ g.color }}</p>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 12px;">
+              <span style="font-family: 'Anton', sans-serif; font-size: 19px; letter-spacing: 0.02em; color: #C9A227;">{{ g.precioTexto }}</span>
+              <button type="button" onClick="{{ g.agregar }}" data-bc-press="1" style="padding: 11px 18px; background: #FFFFFF; color: #0A0A0A; border: none; border-radius: 99px; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;" style-hover="background: #C9A227;">Agregar</button>
+            </div>
+          </div>
+        </article>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="apartado" style="padding: 88px 20px; background: #101010; border-top: 1px solid #1C1C1C;">
+    <div style="max-width: 1240px; margin: 0 auto;">
+      <div data-reveal="1" style="margin-bottom: 40px;">
+        <p style="margin: 0 0 10px; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: #C9A227;">Sistema de apartado</p>
+        <h2 style="margin: 0; max-width: 780px; font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(38px, 9vw, 78px); line-height: 0.92; text-transform: uppercase;">Apartá hoy, pagá en {{ plazoDias }} días</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px;">
+        <div data-reveal="1" style="padding: 26px; background: #0A0A0A; border: 1px solid #1C1C1C; border-radius: 4px;">
+          <p style="margin: 0 0 16px; font-family: 'Anton', sans-serif; font-size: 44px; color: #C9A227;">01</p>
+          <h3 style="margin: 0 0 10px; font-family: 'Anton', sans-serif; font-weight: 400; font-size: 21px; text-transform: uppercase;">Elegí tu gorra</h3>
+          <p style="margin: 0; font-size: 14px; line-height: 1.65; color: #9A9A9A;">Agregala al carrito y mandanos el pedido por WhatsApp. Te confirmamos disponibilidad y talla.</p>
+        </div>
+        <div data-reveal="1" style="padding: 26px; background: #0A0A0A; border: 1px solid #1C1C1C; border-radius: 4px;">
+          <p style="margin: 0 0 16px; font-family: 'Anton', sans-serif; font-size: 44px; color: #C9A227;">02</p>
+          <h3 style="margin: 0 0 10px; font-family: 'Anton', sans-serif; font-weight: 400; font-size: 21px; text-transform: uppercase;">Abonás el {{ abonoPct }}%</h3>
+          <p style="margin: 0; font-size: 14px; line-height: 1.65; color: #9A9A9A;">Con ese abono sacamos la gorra de la venta y queda reservada a tu nombre.</p>
+        </div>
+        <div data-reveal="1" style="padding: 26px; background: #0A0A0A; border: 1px solid #1C1C1C; border-radius: 4px;">
+          <p style="margin: 0 0 16px; font-family: 'Anton', sans-serif; font-size: 44px; color: #C9A227;">03</p>
+          <h3 style="margin: 0 0 10px; font-family: 'Anton', sans-serif; font-weight: 400; font-size: 21px; text-transform: uppercase;">Completás en {{ plazoDias }} días</h3>
+          <p style="margin: 0; font-size: 14px; line-height: 1.65; color: #9A9A9A;">Pagás el resto y la enviamos. Pasados los {{ plazoDias }} días sin completar el pago, la gorra vuelve a la venta al público.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="marca" style="padding: 96px 20px; background: #F4F3F0; color: #0A0A0A;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 48px; align-items: center; max-width: 1120px; margin: 0 auto;">
+      <div data-reveal="1">
+        <h2 style="margin: 0; max-width: 15ch; font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(36px, 8vw, 66px); line-height: 0.94; text-transform: uppercase; text-wrap: balance;">Nadie se pone una gorra por casualidad</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px;">
+          <span style="padding: 9px 15px; background: #0A0A0A; color: #FFFFFF; border-radius: 99px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;">Etiquetas originales</span>
+          <span style="padding: 9px 15px; background: #0A0A0A; color: #FFFFFF; border-radius: 99px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;">Fotos reales del producto</span>
+          <span style="padding: 9px 15px; background: #0A0A0A; color: #FFFFFF; border-radius: 99px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;">Revisión antes de enviar</span>
+        </div>
+      </div>
+      <div data-reveal="1" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <img src="assets/img/nets.png" alt="Gorra Brooklyn Nets 59FIFTY" width="760" height="760" loading="lazy" style="display: block; width: 100%; height: auto; border-radius: 4px;" />
+        <img src="assets/img/lakers.png" alt="Gorra Los Angeles Lakers 59FIFTY" width="760" height="760" loading="lazy" style="display: block; width: 100%; height: auto; border-radius: 4px; margin-top: 28px;" />
+        <img src="assets/img/warriors.png" alt="Gorra Golden State Warriors 59FIFTY" width="760" height="760" loading="lazy" style="display: block; width: 100%; height: auto; border-radius: 4px;" />
+        <img src="assets/img/red-sox-shadow.png" alt="Gorra Boston Red Sox Shadow Stitch 59FIFTY" width="760" height="760" loading="lazy" style="display: block; width: 100%; height: auto; border-radius: 4px; margin-top: 28px;" />
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" style="padding: 88px 20px 96px; max-width: 860px; margin: 0 auto;">
+    <div data-reveal="1" style="margin-bottom: 30px;">
+      <p style="margin: 0 0 12px; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: #C9A227;">Preguntas frecuentes</p>
+      <h2 style="margin: 0; font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(34px, 8vw, 66px); line-height: 0.94; text-transform: uppercase;">Todo lo que preguntan</h2>
+    </div>
+    <div style="display: grid; gap: 10px;">
+      <sc-for list="{{ faqs }}" as="f" hint-placeholder-count="5">
+        <div style="background: #111111; border: 1px solid #1C1C1C; border-radius: 4px; overflow: hidden;">
+          <button type="button" onClick="{{ f.toggle }}" aria-expanded="{{ f.expandida }}" style="display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; padding: 20px; background: transparent; border: none; color: #FFFFFF; font-size: 16px; font-weight: 500; text-align: left; cursor: pointer;">
+            {{ f.pregunta }}
+            <span style="{{ f.iconoEstilo }}" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M3.1 5.2 7 9.1l3.9-3.9" stroke="#C9A227" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </button>
+          <div style="{{ f.cuerpoEstilo }}">
+            <div style="overflow: hidden; min-height: 0;">
+              <p style="margin: 0; padding: 0 20px 20px; font-size: 14px; line-height: 1.7; color: #9A9A9A;">{{ f.respuesta }}</p>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <footer style="padding: 64px 20px 40px; background: #0D0D0D; border-top: 1px solid #1C1C1C;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 34px; max-width: 1240px; margin: 0 auto;">
+      <div>
+        <p style="margin: 0 0 12px; font-family: 'Anton', sans-serif; font-size: 26px; text-transform: uppercase;">BellaCap<span style="color: #C9A227;">CR</span></p>
+        <p style="margin: 0; max-width: 260px; font-size: 14px; line-height: 1.65; color: #8A8A8A;">Lleva tu pasión en la cabeza. Gorras 100% originales en Costa Rica.</p>
+      </div>
+      <div>
+        <p style="margin: 0 0 14px; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #808080;">Contacto</p>
+        <div style="display: grid; gap: 10px; font-size: 14px;">
+          <a href="{{ waTiendaLink }}" target="_blank" rel="noopener">WhatsApp {{ whatsappBonito }}</a>
+          <a href="https://instagram.com/bellacapcr" target="_blank" rel="noopener">@bellacapcr</a>
+          <a href="mailto:bellacapcr@gmail.com">bellacapcr@gmail.com</a>
+        </div>
+      </div>
+      <div>
+        <p style="margin: 0 0 14px; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #808080;">Horario</p>
+        <p style="margin: 0 0 10px; font-size: 14px; color: #8A8A8A;">Contestamos todos los días de la semana.</p>
+        <p style="margin: 0; font-size: 14px; color: #8A8A8A;">Envíos: {{ zonaEntrega }}</p>
+      </div>
+      <div>
+        <p style="margin: 0 0 14px; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #808080;">Legal</p>
+        <p style="margin: 0; font-size: 12px; line-height: 1.7; color: #808080;">BellaCap es un revendedor independiente. No estamos afiliados ni patrocinados por New Era, MLB, NBA ni ninguna de las marcas o equipos mencionados. Todas las marcas pertenecen a sus respectivos dueños.</p>
+      </div>
+    </div>
+    <p style="max-width: 1240px; margin: 40px auto 0; padding-top: 22px; border-top: 1px solid #1C1C1C; font-size: 12px; color: #7A7A7A;">© 2026 BellaCap CR. Todos los derechos reservados.</p>
+  </footer>
+
+  <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0A0A0A"/><text x="50" y="60" font-family="Arial Black, sans-serif" font-size="26" fill="#C9A227" text-anchor="middle">BC</text></svg></template>
+
+  <div style="{{ overlayEstilo }}" onClick="{{ cerrarCarrito }}"></div>
+  <aside style="{{ drawerEstilo }}">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px; border-bottom: 1px solid #1C1C1C;">
+      <p style="margin: 0; font-family: 'Anton', sans-serif; font-size: 22px; text-transform: uppercase;">Tu pedido</p>
+      <button type="button" onClick="{{ cerrarCarrito }}" data-bc-press="1" aria-label="Cerrar el pedido" style="display: grid; place-items: center; width: 36px; height: 36px; background: transparent; border: 1px solid #262626; border-radius: 50%; color: #FFFFFF; cursor: pointer;" style-hover="border-color: #C9A227;"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 3l8 8M11 3l-8 8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+    </div>
+    <div style="flex: 1; overflow-y: auto; padding: 20px;">
+      <sc-if value="{{ carritoVacio }}" hint-placeholder-val="{{ true }}">
+        <div style="padding: 40px 0; text-align: center;">
+          <p style="margin: 0 0 8px; font-family: 'Anton', sans-serif; font-size: 20px; text-transform: uppercase;">Carrito vacío</p>
+          <p style="margin: 0; font-size: 14px; color: #8A8A8A;">Agregá gorras del catálogo y armamos el pedido acá.</p>
+        </div>
+      </sc-if>
+      <div style="display: grid; gap: 14px;">
+        <sc-for list="{{ lineas }}" as="l" hint-placeholder-count="0">
+          <div style="display: grid; grid-template-columns: 68px 1fr; gap: 14px; padding-bottom: 14px; border-bottom: 1px solid #1C1C1C;">
+            <img src="{{ l.imagen }}" alt="{{ l.nombre }}" width="760" height="760" loading="lazy" style="display: block; width: 68px; height: 68px; object-fit: cover; background: #FFFFFF; border-radius: 3px;" />
+            <div>
+              <p style="margin: 0 0 4px; font-family: 'Anton', sans-serif; font-size: 15px; line-height: 1.2; text-transform: uppercase;">{{ l.nombre }}</p>
+              <p style="margin: 0 0 10px; font-size: 12px; color: #8A8A8A;">Talla {{ l.talla }} · {{ l.precioTexto }}</p>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <button type="button" onClick="{{ l.menos }}" data-bc-press="1" aria-label="Quitar una unidad" style="display: grid; place-items: center; width: 28px; height: 28px; background: #1A1A1A; border: none; border-radius: 50%; color: #FFFFFF; cursor: pointer;" style-hover="background: #C9A227; color: #0A0A0A;"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.4 6h7.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+                <span style="min-width: 18px; text-align: center; font-size: 14px;">{{ l.cantidad }}</span>
+                <button type="button" onClick="{{ l.mas }}" data-bc-press="1" aria-label="Sumar una unidad" style="display: grid; place-items: center; width: 28px; height: 28px; background: #1A1A1A; border: none; border-radius: 50%; color: #FFFFFF; cursor: pointer;" style-hover="background: #C9A227; color: #0A0A0A;"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M6 2.4v7.2M2.4 6h7.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+                <button type="button" onClick="{{ l.quitar }}" data-bc-press="1" style="margin-left: auto; background: transparent; border: none; color: #8A8A8A; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer;" style-hover="color: #E5251E;">Quitar</button>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="padding: 20px; border-top: 1px solid #1C1C1C; background: #0D0D0D;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px;">
+        <span style="font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: #8A8A8A;">Subtotal</span>
+        <span style="font-family: 'Anton', sans-serif; font-size: 26px; color: #C9A227;">{{ subtotalTexto }}</span>
+      </div>
+      <p style="margin: 0 0 16px; font-size: 12px; line-height: 1.6; color: #808080;">{{ notaSubtotal }}</p>
+      <a href="{{ waPedidoLink }}" target="_blank" rel="noopener" style="display: block; padding: 17px; text-align: center; background: #25D366; color: #0A0A0A; border-radius: 99px; font-size: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;" style-hover="color: #0A0A0A;">Pedir por WhatsApp</a>
+    </div>
+  </aside>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;whatsapp&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;63969167&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Negocio&quot;},&quot;zonaEntrega&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Correos de Costa Rica, todo el país&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Negocio&quot;},&quot;abonoPct&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:50,&quot;min&quot;:10,&quot;max&quot;:100,&quot;step&quot;:5,&quot;unit&quot;:&quot;%&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Apartado&quot;},&quot;plazoDias&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:15,&quot;min&quot;:3,&quot;max&quot;:60,&quot;step&quot;:1,&quot;unit&quot;:&quot;días&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Apartado&quot;}}">
+const CATALOGO = [
+  { id: "dod-5950", nombre: "Day of the Dead 59FIFTY", marca: "New Era", liga: "MLB", equipo: "Day of the Dead", color: "Negro", talla: "7 3/8", precio: 15000, imagen: "assets/img/day-of-the-dead.png", estado: "disponible", destacado: true },
+  { id: "guy-fieri-5950", nombre: "Guy Fieri Philadelphia Stitch 59FIFTY", marca: "New Era", liga: "MLB", equipo: "Philadelphia", color: "Azul marino", talla: "Ajustable", precio: 24000, imagen: "assets/img/guy-fieri-philadelphia.png", estado: "disponible", destacado: true },
+  { id: "orioles-950", nombre: "Baltimore Orioles Vintage Retro 9FIFTY", marca: "New Era", liga: "MLB", equipo: "Baltimore Orioles", color: "Negro", talla: "Ajustable", precio: 16500, imagen: "assets/img/orioles-vintage.png", estado: "disponible", destacado: true },
+  { id: "redsox-5950", nombre: "Boston Red Sox Shadow Stitch 59FIFTY", marca: "New Era", liga: "MLB", equipo: "Boston Red Sox", color: "Negro", talla: "7 3/8", precio: 18000, imagen: "assets/img/red-sox-shadow.png", estado: "disponible", destacado: true },
+  { id: "braves-5950", nombre: "Atlanta Braves Player's 59FIFTY", marca: "New Era", liga: "MLB", equipo: "Atlanta Braves", color: "Azul y rojo", talla: "7 3/8", precio: 17500, imagen: "assets/img/braves-players.png", estado: "disponible", destacado: false },
+  { id: "warriors-5950", nombre: "Golden State Warriors 59FIFTY", marca: "New Era", liga: "NBA", equipo: "Golden State Warriors", color: "Azul", talla: "7 1/2", precio: 24000, imagen: "assets/img/warriors.png", estado: "disponible", destacado: false },
+  { id: "whitesox-940", nombre: "Chicago White Sox Logo Essentials 9FORTY", marca: "New Era", liga: "MLB", equipo: "Chicago White Sox", color: "Celeste", talla: "Ajustable", precio: 16500, imagen: "assets/img/white-sox-essentials.png", estado: "disponible", destacado: false },
+  { id: "lakers-5950", nombre: "Los Angeles Lakers 59FIFTY", marca: "New Era", liga: "NBA", equipo: "Los Angeles Lakers", color: "Morado", talla: "7 1/2", precio: 15000, imagen: "assets/img/lakers.png", estado: "disponible", destacado: false },
+  { id: "nets-5950", nombre: "Brooklyn Nets 59FIFTY", marca: "New Era", liga: "NBA", equipo: "Brooklyn Nets", color: "Negro", talla: "7 1/2", precio: 18000, imagen: "assets/img/nets.png", estado: "disponible", destacado: false }
+];
+
+const FAQ = [
+  { p: "¿Las gorras son originales?", r: "Sí, 100%. Cada gorra se compra en tienda autorizada y llega con sus etiquetas y stickers originales. Si tenés dudas, te mandamos fotos y video del producto exacto antes de enviarlo." },
+  { p: "¿Cómo funciona el envío?", r: "Enviamos a todo Costa Rica por Correos de Costa Rica. Coordinamos el envío por WhatsApp una vez confirmado el pedido y te compartimos el número de guía." },
+  { p: "¿Puedo cambiar la gorra si no me queda?", r: "Escribinos antes de 3 días después de recibirla y buscamos el cambio de talla o modelo según disponibilidad. La gorra debe estar sin uso y con etiquetas." },
+  { p: "¿Qué formas de pago aceptan?", r: "SINPE Móvil y transferencia. El pedido se cierra por WhatsApp y ahí te pasamos los datos." },
+  { p: "¿Qué pasa si aparto y no completo el pago?", r: "El apartado dura 15 días desde el abono. Si no se completa el pago en ese plazo, la gorra vuelve a la venta al público." }
+];
+
+const CHIP_BASE = "padding: 8px 14px; border-radius: 99px; font-size: 12px; letter-spacing: 0.06em; cursor: pointer;";
+const CHIP_OFF = CHIP_BASE + " background: transparent; border: 1px solid #262626; color: #9A9A9A;";
+const CHIP_ON = CHIP_BASE + " background: #C9A227; border: 1px solid #C9A227; color: #0A0A0A; font-weight: 700;";
+
+class Component extends DCLogic {
+  state = { query: "", filtros: { marca: [], liga: [], color: [] }, carrito: [], carritoAbierto: false, faqAbierta: 0 };
+
+  componentDidMount() {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const nav = document.querySelector("[data-bc-nav]");
+    if (nav && window.innerWidth >= 860) nav.style.display = "flex";
+    this._resize = () => { if (nav) nav.style.display = window.innerWidth >= 860 ? "flex" : "none"; };
+    window.addEventListener("resize", this._resize);
+
+    // Si algo se abre encima de la página, tiene que poder cerrarse sin buscar el botón.
+    this._tecla = (e) => {
+      if (e.key === "Escape" && this.state.carritoAbierto) this.setState({ carritoAbierto: false });
+    };
+    window.addEventListener("keydown", this._tecla);
+
+    // Un solo lector de scroll, y lo que escribe se pinta dentro del frame.
+    // La cabecera cambia aunque el usuario pida menos movimiento: es color, no desplazamiento.
+    const cabecera = document.querySelector("[data-bc-cabecera]");
+    const lineas = reduce ? null : document.querySelector("[data-bc-parallax]");
+    let pendiente = false;
+    this._scroll = () => {
+      if (pendiente) return;
+      pendiente = true;
+      requestAnimationFrame(() => {
+        pendiente = false;
+        const y = window.scrollY;
+        if (cabecera) {
+          if (y > 8) cabecera.setAttribute("data-bc-pegado", "1");
+          else cabecera.removeAttribute("data-bc-pegado");
+        }
+        if (lineas) lineas.style.transform = "translate3d(0," + (y * 0.18).toFixed(1) + "px,0)";
+      });
+    };
+    window.addEventListener("scroll", this._scroll, { passive: true });
+    this._scroll();
+
+    if (reduce) return;
+    this._io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        e.target.style.opacity = "1";
+        e.target.style.transform = "none";
+        if (e.target.dataset.bcEntrada === "titular") e.target.style.clipPath = "inset(0 0 0 0)";
+        this._io.unobserve(e.target);
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+    this._revelar = () => {
+      document.querySelectorAll("[data-reveal]").forEach((el) => {
+        if (el.dataset.bcSeen) return;
+        el.dataset.bcSeen = "1";
+        el.style.opacity = "0";
+        if (el.querySelector("h2")) {
+          // Los encabezados se destapan; las tarjetas suben. Dos gestos distintos,
+          // no la misma entrada repetida seis veces.
+          el.dataset.bcEntrada = "titular";
+          el.style.clipPath = "inset(0 0 46% 0)";
+          el.style.transform = "translateY(10px)";
+          el.style.transition = "opacity 600ms var(--e-salida), transform 600ms var(--e-salida), clip-path 720ms var(--e-salida)";
+        } else {
+          el.style.transform = "translateY(22px)";
+          el.style.transition = "opacity 520ms var(--e-salida), transform 520ms var(--e-salida)";
+        }
+        this._io.observe(el);
+      });
+    };
+    this._revelar();
+  }
+
+  componentDidUpdate() {
+    if (this._revelar) this._revelar();
+    // Con el cajón abierto el fondo no se mueve: si no, el scroll se va a la página de atrás.
+    document.body.style.overflow = this.state.carritoAbierto ? "hidden" : "";
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this._resize);
+    if (this._scroll) window.removeEventListener("scroll", this._scroll);
+    if (this._tecla) window.removeEventListener("keydown", this._tecla);
+    if (this._io) this._io.disconnect();
+    document.body.style.overflow = "";
+  }
+
+  // toLocaleString("es-CR") separa los miles con espacio segun el navegador ("27 000").
+  // Acá los miles van con punto, siempre, sin depender de los datos de locale.
+  colones(n) { return "₡" + Math.round(Number(n)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+  precioTexto(g) { return g.precio ? this.colones(g.precio) : "Consultar precio"; }
+
+  toggleFiltro(campo, valor) {
+    this.setState((s) => {
+      const actual = s.filtros[campo];
+      const nuevo = actual.includes(valor) ? actual.filter((v) => v !== valor) : actual.concat(valor);
+      return { filtros: Object.assign({}, s.filtros, { [campo]: nuevo }) };
+    });
+  }
+
+  agregar(id) {
+    this.setState((s) => {
+      const existe = s.carrito.find((l) => l.id === id);
+      const carrito = existe
+        ? s.carrito.map((l) => (l.id === id ? { id: l.id, cantidad: l.cantidad + 1 } : l))
+        : s.carrito.concat({ id: id, cantidad: 1 });
+      return { carrito: carrito, carritoAbierto: true };
+    });
+  }
+
+  cambiar(id, delta) {
+    this.setState((s) => ({
+      carrito: s.carrito
+        .map((l) => (l.id === id ? { id: l.id, cantidad: l.cantidad + delta } : l))
+        .filter((l) => l.cantidad > 0)
+    }));
+  }
+
+  quitar(id) { this.setState((s) => ({ carrito: s.carrito.filter((l) => l.id !== id) })); }
+
+  renderVals() {
+    const wa = String(this.props.whatsapp ?? "63969167").replace(/\D/g, "").replace(/^506/, "");
+    const abonoPct = this.props.abonoPct ?? 50;
+    const plazoDias = this.props.plazoDias ?? 15;
+    const zonaEntrega = this.props.zonaEntrega ?? "Correos de Costa Rica, todo el país";
+    const q = this.state.query.trim().toLowerCase();
+    const f = this.state.filtros;
+
+    const visibles = CATALOGO.filter((g) => {
+      if (f.marca.length && !f.marca.includes(g.marca)) return false;
+      if (f.liga.length && !f.liga.includes(g.liga)) return false;
+      if (f.color.length && !f.color.includes(g.color)) return false;
+      if (q) {
+        const blob = (g.nombre + " " + g.marca + " " + g.liga + " " + g.equipo + " " + g.color + " " + g.talla).toLowerCase();
+        if (!blob.includes(q)) return false;
+      }
+      return true;
+    }).map((g) => Object.assign({}, g, {
+      precioTexto: this.precioTexto(g),
+      estado: g.estado === "agotado" ? "Agotado" : g.estado === "ultimas" ? "Últimas" : "Disponible",
+      badgeEstilo: "position: absolute; top: 12px; left: 12px; padding: 6px 11px; border-radius: 99px; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; background: " +
+        (g.estado === "agotado" ? "#5E5E5E" : g.estado === "ultimas" ? "#E5251E" : "#0A0A0A") + "; color: #FFFFFF;",
+      agregar: () => this.agregar(g.id)
+    }));
+
+    const grupo = (etiqueta, campo, valores) => ({
+      etiqueta: etiqueta,
+      opciones: valores.map((v) => ({
+        valor: v,
+        activo: f[campo].includes(v) ? "true" : "false",
+        estilo: f[campo].includes(v) ? CHIP_ON : CHIP_OFF,
+        toggle: () => this.toggleFiltro(campo, v)
+      }))
+    });
+    const unicos = (campo) => CATALOGO.map((g) => g[campo]).filter((v, i, a) => a.indexOf(v) === i);
+
+    const lineas = this.state.carrito.map((l) => {
+      const g = CATALOGO.find((x) => x.id === l.id);
+      return {
+        nombre: g.nombre, imagen: g.imagen, talla: g.talla, cantidad: l.cantidad,
+        precioTexto: this.precioTexto(g),
+        menos: () => this.cambiar(l.id, -1),
+        mas: () => this.cambiar(l.id, 1),
+        quitar: () => this.quitar(l.id)
+      };
+    });
+
+    const totalUnidades = this.state.carrito.reduce((a, l) => a + l.cantidad, 0);
+    const conPrecio = this.state.carrito.filter((l) => CATALOGO.find((x) => x.id === l.id).precio);
+    const subtotal = conPrecio.reduce((a, l) => a + CATALOGO.find((x) => x.id === l.id).precio * l.cantidad, 0);
+    const todosConPrecio = totalUnidades > 0 && conPrecio.length === this.state.carrito.length;
+
+    let msg = "¡Hola BellaCap! Quiero hacer un pedido:\n\n";
+    this.state.carrito.forEach((l) => {
+      const g = CATALOGO.find((x) => x.id === l.id);
+      msg += "• " + g.nombre + " (talla " + g.talla + ") x" + l.cantidad + " — " + (g.precio ? this.colones(g.precio) + " c/u" : "precio a confirmar") + "\n";
+    });
+    msg += "\nTotal de gorras: " + totalUnidades + "\n";
+    msg += todosConPrecio ? "Total: " + this.colones(subtotal) + "\n" : "Total: a confirmar con ustedes\n";
+    msg += "\nMe interesa el sistema de apartado con " + abonoPct + "% de abono.";
+
+    const waLink = (texto) => "https://wa.me/506" + wa + "?text=" + encodeURIComponent(texto);
+    const abierto = this.state.carritoAbierto;
+
+    return {
+      abonoPct: abonoPct, plazoDias: plazoDias, zonaEntrega: zonaEntrega,
+      whatsappBonito: wa.length === 8 ? wa.slice(0, 4) + " " + wa.slice(4) : wa,
+      query: this.state.query,
+      onBuscar: (e) => this.setState({ query: e.target.value }),
+      limpiarFiltros: () => this.setState({ query: "", filtros: { marca: [], liga: [], color: [] } }),
+      gruposFiltro: [grupo("Marca", "marca", unicos("marca")), grupo("Liga", "liga", unicos("liga")), grupo("Color", "color", unicos("color"))],
+      visibles: visibles,
+      sinResultados: visibles.length === 0,
+      conteoTexto: visibles.length === CATALOGO.length ? CATALOGO.length + " gorras disponibles" : visibles.length + " de " + CATALOGO.length + " gorras",
+      drops: CATALOGO.filter((g) => g.destacado),
+      faqs: FAQ.map((item, i) => {
+        const abierta = this.state.faqAbierta === i;
+        return {
+          pregunta: item.p, respuesta: item.r,
+          expandida: abierta ? "true" : "false",
+          toggle: () => this.setState((s) => ({ faqAbierta: s.faqAbierta === i ? -1 : i })),
+          iconoEstilo: "display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; border: 1px solid " +
+            (abierta ? "#C9A227" : "#262626") +
+            "; transition: transform 280ms var(--e-salida), border-color 280ms var(--e-salida); transform: rotate(" +
+            (abierta ? "180deg" : "0deg") + ");",
+          // grid-template-rows en lugar de max-height: la respuesta abre a su alto real,
+          // sin tope inventado ni frenazo al final para las respuestas largas.
+          cuerpoEstilo: "display: grid; grid-template-rows: " + (abierta ? "1fr" : "0fr") +
+            "; transition: grid-template-rows 340ms var(--e-salida);"
+        };
+      }),
+      lineas: lineas,
+      carritoVacio: lineas.length === 0,
+      totalUnidades: totalUnidades,
+      subtotalTexto: todosConPrecio ? this.colones(subtotal) : totalUnidades ? "A confirmar" : this.colones(0),
+      notaSubtotal: todosConPrecio
+        ? "Apartás con " + this.colones(Math.round(subtotal * abonoPct / 100)) + " (" + abonoPct + "%). Envío no incluido."
+        : "Los precios se confirman por WhatsApp. Envío no incluido.",
+      abrirCarrito: () => this.setState({ carritoAbierto: true }),
+      cerrarCarrito: () => this.setState({ carritoAbierto: false }),
+      overlayEstilo: "position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,0.62); -webkit-backdrop-filter: blur(" + (abierto ? "7px" : "0px") + "); backdrop-filter: blur(" + (abierto ? "7px" : "0px") + "); transition: opacity 320ms var(--e-salida), backdrop-filter 380ms var(--e-salida); opacity: " + (abierto ? "1" : "0") + "; pointer-events: " + (abierto ? "auto" : "none") + ";",
+      drawerEstilo: "position: fixed; top: 0; right: 0; bottom: 0; z-index: 61; display: flex; flex-direction: column; width: min(400px, 90vw); background: #0A0A0A; border-left: 1px solid #1C1C1C; box-shadow: -30px 0 60px rgba(0,0,0,0.5); will-change: transform; transition: transform 380ms var(--e-cajon); transform: translateX(" + (abierto ? "0" : "101%") + ");",
+      waPedidoLink: waLink(totalUnidades ? msg : "¡Hola BellaCap! Quiero consultar por una gorra."),
+      waTiendaLink: waLink("¡Hola BellaCap! Vengo de la web y quiero consultar por una gorra."),
+      waAvisoLink: waLink("¡Hola BellaCap! Quiero que me avisen del próximo drop.")
+    };
+  }
+}
+</script>
+<script src="assets/3d/cap-viewer.js" defer></script>
+</body>
+</html>

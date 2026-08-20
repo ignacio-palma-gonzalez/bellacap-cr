@@ -1,0 +1,8 @@
+.claude/
+.vscode/
+__pycache__/
+*.pyc
+*.bak
+uploads/
+.DS_Store
+Thumbs.db
